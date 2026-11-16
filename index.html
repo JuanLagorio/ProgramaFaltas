@@ -1,3 +1,4 @@
+<meta charset="utf-8" />
 <title>Control de Asistencia</title>
 <style>
   :root{
@@ -384,10 +385,269 @@
     font-size:12.5px;
   }
 
+  /* ---------- barra de exportacion (pantalla) ---------- */
+  .exportBar{
+    display:flex;
+    align-items:center;
+    gap:16px 20px;
+    flex-wrap:wrap;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:16px 18px;
+    margin-bottom:24px;
+  }
+  .exportIcon{
+    flex:none;
+    width:40px;height:40px;
+    border-radius:9px;
+    background:var(--accent-wash);
+    color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .exportText{flex:1;min-width:220px;}
+  .exportText strong{display:block;font-size:14.5px;}
+  .exportText span{display:block;font-size:12.5px;color:var(--ink-muted);margin-top:2px;}
+  .exportOpts{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    font-size:13px;
+  }
+  .exportOpts label{display:flex;align-items:center;gap:7px;cursor:pointer;}
+  .exportOpts label.off{opacity:.45;cursor:not-allowed;}
+  .exportOpts input{accent-color:var(--accent);margin:0;}
+
+  /* ---------- reporte impreso ---------- */
+  #printReport{display:none;}
+
   @media print{
-    #uploadSection, .actionsRow, button{display:none !important;}
-    .empCard{break-inside:avoid;}
-    body{background:#fff;}
+    @page{ size:A4; margin:15mm 14mm 16mm; }
+    html, body{background:#fff !important;}
+
+    /* Sin reporte calculado: se imprime la pagina tal cual, sin controles */
+    body:not(.has-report) #uploadSection,
+    body:not(.has-report) .actionsRow,
+    body:not(.has-report) .exportBar,
+    body:not(.has-report) button{display:none !important;}
+    body:not(.has-report) .empCard{break-inside:avoid;}
+
+    /* Con reporte: solo el documento A4 */
+    body.has-report > .wrap{display:none !important;}
+    body.has-report #printReport{display:block;}
+  }
+
+  #printReport{
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:#292217;
+    background:#fff;
+    font-size:9.5pt;
+    line-height:1.4;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  #printReport b{font-weight:600;}
+  .pr-serif{font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;}
+
+  .pr-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:18px;
+    padding-bottom:10px;
+    border-bottom:2pt solid #a86a26;
+  }
+  .pr-eyebrow{
+    font-size:7pt;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#a86a26;
+    font-weight:700;
+  }
+  .pr-title{
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    font-size:23pt;
+    font-weight:normal;
+    line-height:1.1;
+    margin:3px 0 4px;
+  }
+  .pr-period{font-size:10pt;color:#6b6152;}
+  .pr-period b{color:#292217;}
+  .pr-meta{
+    text-align:right;
+    font-size:8pt;
+    color:#6b6152;
+    line-height:1.65;
+    max-width:72mm;
+    overflow-wrap:anywhere;
+  }
+  .pr-meta b{color:#292217;}
+
+  .pr-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr) 1.35fr;
+    border:.75pt solid #ddd3c0;
+    border-radius:6px;
+    overflow:hidden;
+    margin:14px 0 20px;
+  }
+  .pr-stat{padding:8px 11px 9px;border-left:.75pt solid #ddd3c0;}
+  .pr-stat:first-child{border-left:none;}
+  .pr-stat .n{
+    display:block;
+    font-size:15pt;
+    font-weight:600;
+    line-height:1.25;
+    letter-spacing:-.01em;
+    white-space:nowrap;
+    font-variant-numeric:lining-nums tabular-nums;
+  }
+  .pr-stat .l{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:6.8pt;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:#6b6152;
+  }
+  .pr-dot{width:6px;height:6px;border-radius:50%;flex:none;}
+  .pr-dot.late{background:#a86a26;}
+  .pr-dot.extra{background:#3c7a63;}
+  .pr-dot.absent{background:#a5372c;}
+
+  .pr-h2{
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    font-size:13pt;
+    font-weight:normal;
+    margin:0 0 8px;
+    break-after:avoid;
+  }
+  .pr-section{margin-bottom:22px;}
+
+  #printReport table.pr-table{width:100%;border-collapse:collapse;font-size:8.8pt;}
+  #printReport .pr-table th{
+    text-align:left;
+    font-size:6.8pt;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:#6b6152;
+    font-weight:700;
+    padding:0 7px 5px;
+    border-bottom:1pt solid #292217;
+    vertical-align:bottom;
+  }
+  #printReport .pr-table td{
+    padding:5px 7px;
+    border-bottom:.5pt solid #e6dfd1;
+    font-variant-numeric:tabular-nums;
+    vertical-align:middle;
+  }
+  #printReport .pr-table tbody tr:nth-child(even) td{background:#faf7f1;}
+  #printReport .pr-table tr{break-inside:avoid;}
+  #printReport .pr-table .num{text-align:right;}
+  #printReport .pr-table tfoot td{
+    font-weight:700;
+    border-top:1pt solid #292217;
+    border-bottom:none;
+    background:none;
+  }
+  .pr-code{color:#8a7f6d;font-size:7.5pt;margin-left:5px;font-weight:normal;}
+  .pr-zero{color:#bdb3a2;}
+  .pr-muted{color:#8a7f6d;}
+  .pr-c-late{color:#8f5718;}
+  .pr-c-extra{color:#2f6551;}
+  .pr-c-absent{color:#a5372c;}
+
+  .pr-emp{
+    border:.75pt solid #ddd3c0;
+    border-radius:6px;
+    padding:10px 12px 11px;
+    margin-bottom:9px;
+    break-inside:avoid;
+  }
+  .pr-emp-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    padding-bottom:6px;
+    margin-bottom:8px;
+    border-bottom:.5pt solid #e6dfd1;
+  }
+  .pr-emp-name{font-family:Georgia,"Iowan Old Style",serif;font-size:12pt;}
+  .pr-emp-sched{font-size:8pt;color:#6b6152;}
+  .pr-emp-sched b{color:#292217;}
+  .pr-clean{font-size:8.5pt;color:#6b6152;font-style:italic;}
+  .pr-cols{
+    display:grid;
+    grid-template-columns:1fr 1fr .85fr;
+    gap:16px;
+  }
+  .pr-col h4{
+    font-size:6.8pt;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin:0 0 3px;
+    padding-bottom:3px;
+    border-bottom:1pt solid currentColor;
+    display:flex;
+    justify-content:space-between;
+  }
+  .pr-col.late h4{color:#a86a26;}
+  .pr-col.extra h4{color:#3c7a63;}
+  .pr-col.absent h4{color:#a5372c;}
+  #printReport .pr-col table{width:100%;border-collapse:collapse;font-size:8.3pt;}
+  #printReport .pr-col td{
+    padding:2.5px 0;
+    border-bottom:.5pt dotted #ddd3c0;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  #printReport .pr-col tr:last-child td{border-bottom:none;}
+  #printReport .pr-col td.t{text-align:center;color:#6b6152;}
+  #printReport .pr-col td.d{text-align:right;font-weight:600;}
+  .pr-col.late td.d{color:#8f5718;}
+  .pr-col.extra td.d{color:#2f6551;}
+  .pr-col .pr-sum{font-size:7.5pt;color:#6b6152;margin-top:3px;text-align:right;}
+  .pr-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+  .pr-chip{
+    font-size:7.6pt;
+    font-variant-numeric:tabular-nums;
+    padding:1px 5px;
+    border-radius:3px;
+    background:#f6dfdb;
+    color:#8c2d24;
+    white-space:nowrap;
+  }
+  .pr-none{font-size:8pt;font-style:italic;color:#9a8f7c;padding-top:3px;}
+
+  /* Una hoja por empleado */
+  .pr-pageper .pr-emp{
+    break-before:page;
+    border:none;
+    padding:0;
+  }
+  .pr-pageper .pr-emp-head{align-items:flex-end;}
+  .pr-pageper .pr-emp-name{font-size:16pt;}
+  .pr-pageper .pr-cols{grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  .pr-pageper .pr-col table{font-size:9pt;}
+  .pr-pageper .pr-col td{padding:4px 0;}
+  .pr-pageper .pr-emp-tag{
+    font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:#a86a26;font-weight:700;
+    display:block;margin-bottom:2px;
+  }
+  .pr-emp-tag{display:none;}
+  .pr-pageper .pr-emp-totals{display:grid;}
+  .pr-emp-totals{
+    display:none;
+    grid-template-columns:repeat(3,1fr);
+    border:.75pt solid #ddd3c0;
+    border-radius:6px;
+    overflow:hidden;
+    margin:4px 0 16px;
   }
 </style>
 
@@ -445,9 +705,23 @@
   <section id="resultsSection">
     <h2><span class="step-num">3</span>Resultado por empleado</h2>
     <div class="summaryStrip" id="summaryStrip"></div>
+    <div class="exportBar">
+      <div class="exportIcon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg>
+      </div>
+      <div class="exportText">
+        <strong>Reporte listo para imprimir</strong>
+        <span>Documento A4 con resumen general y detalle por empleado. Para obtener el PDF, en el diálogo elegí <em>Guardar como PDF</em> como destino.</span>
+      </div>
+      <div class="exportOpts">
+        <label><input type="checkbox" id="optDetail" checked /> Incluir detalle por empleado</label>
+        <label id="optPagePerEmpLbl"><input type="checkbox" id="optPagePerEmp" /> Cada empleado en hoja aparte</label>
+      </div>
+      <button class="primary" id="printBtn">Imprimir / Guardar PDF</button>
+    </div>
     <div id="employeeCards"></div>
     <div class="actionsRow" style="justify-content:flex-end;">
-      <button class="ghost" id="printBtn">Imprimir / guardar como PDF</button>
+      <button class="ghost" id="printBtnBottom">Imprimir / Guardar PDF</button>
     </div>
   </section>
 
@@ -455,6 +729,9 @@
     Todo el procesamiento ocurre en este navegador: el archivo nunca se envía a ningún servidor. Los "días sin marcar" se calculan sobre las fechas que aparecen en el archivo subido (fines de semana u otros días sin operación no se cuentan como ausencia).
   </footer>
 </div>
+
+<div id="printReport" aria-hidden="true"></div>
+<style id="printPageStyle"></style>
 
 <script>
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
@@ -495,12 +772,15 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
     }
   }
   function pad2(n){ return (n<10?"0":"")+n; }
+  // Se redondea el total primero: si no, 08:59:40 daba "08:60".
   function minutesToHHMM(mins){
-    var h=Math.floor(mins/60), m=Math.round(mins%60);
+    mins=Math.round(mins);
+    var h=Math.floor(mins/60), m=mins%60;
     return pad2(h)+":"+pad2(m);
   }
   function minutesToHuman(mins){
-    var h=Math.floor(mins/60), m=Math.round(mins%60);
+    mins=Math.round(mins);
+    var h=Math.floor(mins/60), m=mins%60;
     if(h<=0) return m+" min";
     if(m===0) return h+" h";
     return h+" h "+m+" min";
@@ -585,6 +865,9 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
   // ---------- state ----------
   var state = {
     workbook:null,
+    fileName:"",
+    lastResults:null, // resultado del ultimo "Calcular reporte" (para el PDF)
+    lastTolerance:0,
     rows:[], // {code, name, dateKey, minutes, horario}
     sessionDates:[], // sorted unique dateKeys present anywhere in filtered rows
     employees:[] // {code, name}
@@ -606,6 +889,12 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
   var summaryStrip=document.getElementById("summaryStrip");
   var employeeCards=document.getElementById("employeeCards");
   var printBtn=document.getElementById("printBtn");
+  var printBtnBottom=document.getElementById("printBtnBottom");
+  var optDetail=document.getElementById("optDetail");
+  var optPagePerEmp=document.getElementById("optPagePerEmp");
+  var optPagePerEmpLbl=document.getElementById("optPagePerEmpLbl");
+  var printReport=document.getElementById("printReport");
+  var printPageStyle=document.getElementById("printPageStyle");
 
   function showError(msg){
     errorBox.textContent=msg;
@@ -634,6 +923,8 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
     sheetRow.classList.remove("show");
     configSection.style.display="none";
     resultsSection.classList.remove("show");
+    state.fileName=file.name;
+    clearPrintReport();
 
     var reader=new FileReader();
     reader.onload=function(e){
@@ -853,7 +1144,10 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
       };
     });
 
+    state.lastResults=results;
+    state.lastTolerance=tolerance;
     renderResults(results);
+    renderPrintReport();
   });
 
   function renderResults(results){
@@ -948,7 +1242,233 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
     return col;
   }
 
-  printBtn.addEventListener("click", function(){ window.print(); });
+  // ---------- reporte impreso / PDF ----------
+  var DOW_SHORT=["dom","lun","mar","mié","jue","vie","sáb"];
+
+  function fullDate(key){
+    var p=key.split("-");
+    return p[2]+"/"+p[1]+"/"+p[0];
+  }
+  function shortDate(key, withYear){
+    var p=key.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]);
+    return DOW_SHORT[d.getDay()]+" "+p[2]+"/"+p[1]+(withYear?"/"+p[0].slice(2):"");
+  }
+  function cssString(s){
+    return "\""+String(s).replace(/\\/g,"\\\\").replace(/"/g,"\\\"").replace(/[\r\n]+/g," ")+"\"";
+  }
+  function periodLabel(){
+    var d=state.sessionDates;
+    return fullDate(d[0])+" al "+fullDate(d[d.length-1]);
+  }
+  function scheduleLabel(r){
+    if(r.expEntry===null && r.expExit===null) return null;
+    return (r.expEntry!==null?minutesToHHMM(r.expEntry):"—")+" – "+(r.expExit!==null?minutesToHHMM(r.expExit):"—");
+  }
+  function sumDiff(list){
+    return list.reduce(function(acc,it){ return acc+it.diff; },0);
+  }
+  function numCell(value, text, cls){
+    return value ? "<td class='num "+cls+"'>"+text+"</td>" : "<td class='num pr-zero'>—</td>";
+  }
+
+  function clearPrintReport(){
+    state.lastResults=null;
+    printReport.innerHTML="";
+    printPageStyle.textContent="";
+    document.body.classList.remove("has-report");
+  }
+
+  function syncPrintOptions(){
+    optPagePerEmp.disabled=!optDetail.checked;
+    optPagePerEmpLbl.classList.toggle("off", !optDetail.checked);
+  }
+
+  function renderPrintReport(){
+    var results=state.lastResults;
+    if(!results){ clearPrintReport(); return; }
+    syncPrintOptions();
+
+    var dates=state.sessionDates;
+    var withYear=dates[0].slice(0,4)!==dates[dates.length-1].slice(0,4);
+    var period=periodLabel();
+    var withDetail=optDetail.checked;
+    var pagePer=withDetail && optPagePerEmp.checked;
+
+    var now=new Date();
+    var generated=pad2(now.getDate())+"/"+pad2(now.getMonth()+1)+"/"+now.getFullYear()+" "+pad2(now.getHours())+":"+pad2(now.getMinutes());
+
+    var tot={late:0, lateMin:0, absent:0, extraMin:0};
+    results.forEach(function(r){
+      tot.late+=r.lateList.length;
+      tot.lateMin+=sumDiff(r.lateList);
+      tot.absent+=r.absentList.length;
+      tot.extraMin+=r.extraTotalMin;
+    });
+
+    var h=[];
+
+    // Encabezado
+    h.push(
+      "<header class='pr-head'>"+
+        "<div>"+
+          "<div class='pr-eyebrow'>Registro de accesos · Reporte de asistencia</div>"+
+          "<h1 class='pr-title'>Control de Asistencia</h1>"+
+          "<div class='pr-period'>Período <b>"+period+"</b> · "+dates.length+" día"+(dates.length===1?"":"s")+" con actividad</div>"+
+        "</div>"+
+        "<div class='pr-meta'>"+
+          (state.fileName?"<div>Archivo <b>"+escapeHtml(state.fileName)+"</b></div>":"")+
+          "<div>Tolerancia <b>"+state.lastTolerance+" min</b></div>"+
+          "<div>Generado <b>"+generated+"</b></div>"+
+        "</div>"+
+      "</header>"
+    );
+
+    // Totales
+    function stat(n,label,dot){
+      return "<div class='pr-stat'><span class='n'>"+n+"</span><span class='l'>"+(dot?"<span class='pr-dot "+dot+"'></span>":"")+label+"</span></div>";
+    }
+    h.push(
+      "<div class='pr-stats'>"+
+        stat(results.length,"Empleados")+
+        stat(dates.length,"Días del período")+
+        stat(tot.late,"Llegadas tarde","late")+
+        stat(tot.absent,"Días sin marcar","absent")+
+        stat(tot.extraMin?minutesToHuman(tot.extraMin):"0","Horas extra","extra")+
+      "</div>"
+    );
+
+    // Resumen por empleado
+    var rows=results.map(function(r){
+      var sched=scheduleLabel(r);
+      var lateMin=sumDiff(r.lateList);
+      return "<tr>"+
+        "<td><b>"+escapeHtml(r.emp.name)+"</b><span class='pr-code'>"+escapeHtml(r.emp.code)+"</span></td>"+
+        "<td>"+(sched?sched:"<span class='pr-muted'>Sin cargar</span>")+"</td>"+
+        numCell(r.lateList.length, r.lateList.length, "pr-c-late")+
+        numCell(lateMin, minutesToHuman(lateMin), "pr-c-late")+
+        numCell(r.absentList.length, r.absentList.length, "pr-c-absent")+
+        numCell(r.extraTotalMin, minutesToHuman(r.extraTotalMin), "pr-c-extra")+
+      "</tr>";
+    }).join("");
+
+    h.push(
+      "<section class='pr-section'>"+
+        "<h2 class='pr-h2'>Resumen por empleado</h2>"+
+        "<table class='pr-table'>"+
+          "<thead><tr>"+
+            "<th>Empleado</th><th>Horario</th>"+
+            "<th class='num'>Tardanzas</th><th class='num'>Demora acumulada</th>"+
+            "<th class='num'>Días sin marcar</th><th class='num'>Horas extra</th>"+
+          "</tr></thead>"+
+          "<tbody>"+rows+"</tbody>"+
+          "<tfoot><tr>"+
+            "<td>Total</td><td></td>"+
+            numCell(tot.late, tot.late, "")+
+            numCell(tot.lateMin, minutesToHuman(tot.lateMin), "")+
+            numCell(tot.absent, tot.absent, "")+
+            numCell(tot.extraMin, minutesToHuman(tot.extraMin), "")+
+          "</tr></tfoot>"+
+        "</table>"+
+      "</section>"
+    );
+
+    // Detalle por empleado
+    if(withDetail){
+      h.push("<section class='pr-section'>");
+      if(!pagePer) h.push("<h2 class='pr-h2'>Detalle por empleado</h2>");
+      results.forEach(function(r){ h.push(printEmployee(r, withYear, period)); });
+      h.push("</section>");
+    }
+
+    printReport.innerHTML=h.join("");
+    printReport.classList.toggle("pr-pageper", pagePer);
+    document.body.classList.add("has-report");
+
+    // Pie de pagina de cada hoja (Chrome/Edge 131+; otros navegadores lo ignoran)
+    var foot="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:7.5pt;color:#8a7f6d;";
+    // Las cajas superiores vacias evitan que el navegador agregue su propio
+    // encabezado (fecha + titulo) arriba de cada hoja.
+    printPageStyle.textContent=
+      "@page{"+
+        "@top-left{content:\"\"}"+
+        "@top-right{content:\"\"}"+
+        "@bottom-left{content:"+cssString("Control de Asistencia · Período "+period)+";"+foot+"}"+
+        "@bottom-right{content:\"Página \" counter(page) \" de \" counter(pages);"+foot+"}"+
+      "}";
+  }
+
+  function printEmployee(r, withYear, period){
+    var sched=scheduleLabel(r);
+    var lateMin=sumDiff(r.lateList);
+    var clean=!r.lateList.length && !r.extraList.length && !r.absentList.length;
+
+    var head=
+      "<div class='pr-emp-head'>"+
+        "<div><span class='pr-emp-tag'>Período "+period+"</span>"+
+        "<span class='pr-emp-name'>"+escapeHtml(r.emp.name)+"</span><span class='pr-code'>código "+escapeHtml(r.emp.code)+"</span></div>"+
+        "<div class='pr-emp-sched'>Horario <b>"+(sched?sched:"sin cargar")+"</b></div>"+
+      "</div>";
+
+    var totals=
+      "<div class='pr-emp-totals'>"+
+        "<div class='pr-stat'><span class='n'>"+r.lateList.length+"</span><span class='l'><span class='pr-dot late'></span>Llegadas tarde</span></div>"+
+        "<div class='pr-stat'><span class='n'>"+r.absentList.length+"</span><span class='l'><span class='pr-dot absent'></span>Días sin marcar</span></div>"+
+        "<div class='pr-stat'><span class='n'>"+(r.extraTotalMin?minutesToHuman(r.extraTotalMin):"0")+"</span><span class='l'><span class='pr-dot extra'></span>Horas extra</span></div>"+
+      "</div>";
+
+    if(clean){
+      var why = sched ? "Sin novedades en el período: llegó a horario y marcó todos los días."
+                      : "Marcó todos los días del período. No se cargó horario, así que no se calcularon tardanzas ni horas extra.";
+      return "<article class='pr-emp'>"+head+totals+"<div class='pr-clean'>"+why+"</div></article>";
+    }
+
+    function timedCol(cls, title, list, verb, emptyMsg, totalLabel){
+      var body;
+      if(!list.length){
+        body="<div class='pr-none'>"+emptyMsg+"</div>";
+      } else {
+        body="<table>"+list.map(function(it){
+          return "<tr><td>"+shortDate(it.date,withYear)+"</td><td class='t'>"+verb+" "+minutesToHHMM(it.marked)+"</td><td class='d'>+"+minutesToHuman(it.diff)+"</td></tr>";
+        }).join("")+"</table>"+
+        (list.length>1?"<div class='pr-sum'>"+totalLabel+" <b>"+minutesToHuman(sumDiff(list))+"</b></div>":"");
+      }
+      return "<div class='pr-col "+cls+"'><h4><span>"+title+"</span><span>"+list.length+"</span></h4>"+body+"</div>";
+    }
+
+    var lateCol = timedCol("late","Llegadas tarde", r.lateList, "entró",
+      r.expEntry===null?"Sin hora de entrada cargada.":"No llegó tarde ningún día.", "Demora total");
+    var extraCol = timedCol("extra","Horas extra", r.extraList, "salió",
+      r.expExit===null?"Sin hora de salida cargada.":"No registró horas extra.", "Total extra");
+
+    var absentCol="<div class='pr-col absent'><h4><span>Días sin marcar</span><span>"+r.absentList.length+"</span></h4>"+
+      (r.absentList.length
+        ? "<div class='pr-chips'>"+r.absentList.map(function(dk){ return "<span class='pr-chip'>"+shortDate(dk,withYear)+"</span>"; }).join("")+"</div>"
+        : "<div class='pr-none'>Marcó todos los días.</div>")+
+      "</div>";
+
+    return "<article class='pr-emp'>"+head+totals+"<div class='pr-cols'>"+lateCol+extraCol+absentCol+"</div></article>";
+  }
+
+  function printTitle(){
+    var d=state.sessionDates;
+    return "Reporte de asistencia "+fullDate(d[0]).replace(/\//g,"-")+" al "+fullDate(d[d.length-1]).replace(/\//g,"-");
+  }
+
+  // El titulo del documento es el nombre sugerido del PDF al guardarlo.
+  var originalTitle=document.title;
+  window.addEventListener("beforeprint", function(){
+    if(state.lastResults){
+      renderPrintReport(); // refresca la hora de "Generado"
+      document.title=printTitle();
+    }
+  });
+  window.addEventListener("afterprint", function(){ document.title=originalTitle; });
+
+  optDetail.addEventListener("change", renderPrintReport);
+  optPagePerEmp.addEventListener("change", renderPrintReport);
+  function doPrint(){ window.print(); }
+  printBtn.addEventListener("click", doPrint);
+  printBtnBottom.addEventListener("click", doPrint);
 
 })();
 </script>
